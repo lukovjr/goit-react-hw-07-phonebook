@@ -1,11 +1,11 @@
 import { Input, FormBtn } from './Forma.styled';
 import { useDispatch, useSelector } from 'react-redux';
-import { addContact } from 'redux/contactsSlice';
 import { nanoid } from 'nanoid';
 import { Notify } from 'notiflix';
+import { addContactsThunk } from 'redux/operations';
 
 export const Forma = () => {
-  const contacts = useSelector(({ contacts }) => contacts.contacts);
+  const contacts = useSelector(state => state.contacts.items);
   const dispatch = useDispatch();
 
   const nameInputId = nanoid();
@@ -23,7 +23,7 @@ export const Forma = () => {
       Notify.info(`${contact.name} is in your contacts`);
       return;
     }
-    dispatch(addContact(contact));
+    dispatch(addContactsThunk(contact));
     e.target.reset();
   };
 

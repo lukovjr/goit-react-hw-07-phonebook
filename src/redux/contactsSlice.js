@@ -1,27 +1,58 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { addContactsThunk, deleteContactsThunk, getContactsThunk } from './operations';
 
-const initialState = {
-  contacts: [
-    { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
-    { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
-    { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
-    { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
-  ],
+
+export const initialState = {
+  items: [],
+  isLoading: false,
+  error: null,
 };
 
-export const contactSlice = createSlice({
+export const contactsSlice = createSlice({
   name: 'contacts',
   initialState,
-  reducers: {
-    addContact(state, { payload }) {
-      state.contacts = [...state.contacts, payload];
-    },
-    deleteContact(state, { payload }) {
-      state.contacts = state.contacts.filter(contact => contact.id !== payload);
-    },
+  extraReducers: builder => {
+    builder
+      .addCase(getContactsThunk.pending, state => {
+        state.isLoading = true;
+      })
+      .addCase(getContactsThunk.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.items = action.payload;
+        state.error = '';
+      })
+      .addCase(getContactsThunk.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload;
+      })
+      .addCase(addContactsThunk.pending, state => {
+        state.isLoading = true;
+      })
+      .addCase(addContactsThunk.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.items.unshift(action.payload);
+        state.error = '';
+      })
+      .addCase(addContactsThunk.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload;
+      })
+      .addCase(deleteContactsThunk.pending, state => {
+        state.isLoading = true;
+      })
+      .addCase(deleteContactsThunk.fulfilled, (state, action) => {
+        state.isLoading = false;
+
+        state.items = state.items.filter(el => el.id !== action.payload.id);
+        console.log(state.items);
+        state.error = '';
+      })
+      .addCase(deleteContactsThunk.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload;
+      });
   },
 });
 
-export const contactReducer = contactSlice.reducer;
 
-export const { addContact, deleteContact } = contactSlice.actions;
+export const contactsReducer = contactsSlice.reducer;
