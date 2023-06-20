@@ -2,6 +2,7 @@ import { deleteContactsThunk, getContactsThunk } from 'redux/operations';
 import { ContactsListEl, ContactsList, ContactsBtn } from './Contacts.styled';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
+import { Loader } from 'components/Loader';
 
 export const Contacts = () => {
   const contactsValue = useSelector(state => state.contacts.items);
@@ -31,8 +32,8 @@ export const Contacts = () => {
           return (
             <ContactsListEl key={el.id}>
               {el.name} <span>{el.phone}</span>
-              <ContactsBtn type="button" onClick={() => delContact(el.id)}>
-                Delete
+              <ContactsBtn type="button" disabled = {isLoading} onClick={() => delContact(el.id)}>
+              {isLoading? <Loader/> : 'Delete'}
               </ContactsBtn>
             </ContactsListEl>
           );
